@@ -1,0 +1,36 @@
+run:
+	@docker stop crypto.machine-learning-test 2>/dev/null 1>&2 || true
+	@docker rm crypto.machine-learning-test 2>/dev/null 1>&2 || true
+	@echo "running crypto.machine-learning-test container (ctrl-c to exit)"
+	@docker run \
+	--rm \
+	-it \
+	--name=crypto.machine-learning-test \
+	-v $(shell pwd):/usr/src/crypto.machine-learning \
+	-u $(id -u ${USER}):$(id -g ${USER}) \
+	crypto.machine-learning-test /bin/bash
+	
+test:
+	@docker stop crypto.machine-learning-unittest 2>/dev/null 1>&2 || true
+	@docker rm crypto.machine-learning-unittest 2>/dev/null 1>&2 || true
+	@echo "running crypto.machine-learning unittest container (ctrl-c to exit)"
+	@docker run \
+	    --rm \
+	    -it \
+	    --name crypto.machine-learning-unittest \
+	-v $(shell pwd):/usr/src/crypto.machine-learning \
+	    -u $(id -u ${USER}):$(id -g ${USER}) \
+	    crypto.machine-learning-test /usr/src/crypto.machine-learning/tests/runtests.sh
+	
+stop:
+	docker stop crypto.machine-learning-test
+rm:
+	docker rm crypto.machine-learning-test
+clean:
+	stop rm
+build:
+	docker build --tag crypto.machine-learning-test .
+connect:
+	docker exec -it crypto.machine-learning-test /bin/bash
+deploy:
+	docker tag crypto.machine-learning-test crypto.machine-learning

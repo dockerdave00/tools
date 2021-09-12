@@ -1,0 +1,7 @@
+docker images
+docker tag 86f285831643 davidwnorrisjr/hello:homeworknumber1
+docker push davidwnorrisjr/hello:latest
+
+docker login
+username: davidwnorrisjr
+password: xxxxxxxxxxxxx

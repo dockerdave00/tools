@@ -1,0 +1,105 @@
+docker exec -it  1be2215c7a05 bash
+root@1be2215c7a05:/# psql -h localhost -p 5432 -U postgres -W
+Password:
+psql (13.2 (Debian 13.2-1.pgdg100+1))
+Type "help" for help.
+
+postgres=# /q
+root@1be2215c7a05:/# psql -h localhost -p 5432 -U postgres -W
+Password:
+psql (13.2 (Debian 13.2-1.pgdg100+1))
+Type "help" for help.
+
+postgres-# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+-----------+----------+----------+------------+------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+(3 rows)
+
+postgres-# \l+
+                                                                   List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   |  Size   | Tablespace |                Description
+
+-----------+----------+----------+------------+------------+-----------------------+---------+------------+----------------------------
+----------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |                       | 7877 kB | pg_default | default administrative conn
+ection database
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +| 7729 kB | pg_default | unmodifiable empty database
+           |          |          |            |            | postgres=CTc/postgres |         |            |
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +| 7729 kB | pg_default | default template for new da
+tabases
+           |          |          |            |            | postgres=CTc/postgres |         |            |
+(3 rows)
+
+postgres-# \d
+Did not find any relations.
+postgres=# CREATE TABLE users("name" varchar, "age" int);
+CREATE TABLE
+postgres=# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+-----------+----------+----------+------------+------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+(3 rows)
+
+postgres=# \d
+         List of relations
+ Schema | Name  | Type  |  Owner
+--------+-------+-------+----------
+ public | users | table | postgres
+(1 row)
+
+postgres=# SELECT * FROM users;
+ name | age
+------+-----
+(0 rows)
+
+postgres=# INSERT INTO users (name, age) VALUES ('chris',35);
+INSERT 0 1
+postgres=# SELECT * FROM users;
+ name  | age
+-------+-----
+ chris |  35
+(1 row)
+
+postgres=# DELETE FROM users WHERE name='chris';
+DELETE 1
+
+postgres=# CREATE DATABASE hello;
+CREATE DATABASE
+postgres=# \q
+root@1be2215c7a05:/# psql -h localhost -p 5432 -U postgres -d hello -W
+Password:
+psql (13.2 (Debian 13.2-1.pgdg100+1))
+Type "help" for help.
+
+hello=# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+-----------+----------+----------+------------+------------+-----------------------
+ hello     | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+(4 rows)
+
+hello=# \d
+Did not find any relations.
+
+hello=# \q
+root@1be2215c7a05:/#
+
+
+postgres=# psychopg2
+postgres-# pip install, pip freeze

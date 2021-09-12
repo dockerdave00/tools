@@ -1,0 +1,11 @@
+
+
+docker run --name [container_name] -e POSTGRES_PASSWORD=[your_password] -d postgres:13.2 -v ./init.sql:/docker-entrypoint-initdb.d/1=schema.sql
+
+1-schema.sql:
+
+CREATE DB hello
+CREATE TABLE users
+
+1-data.sql:
+

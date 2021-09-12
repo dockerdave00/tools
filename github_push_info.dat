@@ -1,0 +1,18 @@
+dnorris@SQUIRE:~/homework/hello-golang/hello-golang (homework6)$ git add app.go
+dnorris@SQUIRE:~/homework/hello-golang/hello-golang (homework6)$ git commit -m "took another stab at it"
+[homework6 3425221] took another stab at it
+ 1 file changed, 42 insertions(+), 41 deletions(-)
+dnorris@SQUIRE:~/homework/hello-golang/hello-golang (homework6)$ git push -u origin homework6
+Username for 'https://github.com': dockerdave00
+Password for 'https://dockerdave00@github.com':
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 808 bytes | 808.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/dockerdave00/hello-golang.git
+   66e5fa0..3425221  homework6 -> homework6
+Branch 'homework6' set up to track remote branch 'homework6' from 'origin'.
+
