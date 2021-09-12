@@ -1,12 +1,12 @@
 #!/usr/bin/bash
 
-      HOST_IP="3.16.36.39"
+      HOST_IP="3.17.172.233"
     HTTP_PORT="80"
 
       MY_HOME="/home/dnorris"
      EC2_HOME="/home/ec2-user"
    SOURCE_DIR="${MY_HOME}/homework/hello-python"
-DB_SCRIPT_DIR="${MY_HOME}/homework/scriptfiles"
+DB_SCRIPT_DIR="${MY_HOME}/tools"
      PEM_FILE="${MY_HOME}/dockerdave00_aws_instance_keypair.pem"
  RSA_KEY_FILE="${MY_HOME}/.ssh/id_rsa.pub"
   TARGET_FILE="${EC2_HOME}/.ssh/authorized_keys"
@@ -53,7 +53,7 @@ RESULT=$(ssh -i ${PEM_FILE} ec2-user@${HOST_IP} "sudo grep docker /etc/group" )
 echo -e "\t\tDocker group info: ${RESULT}"
 
 echo -e "\tdocker: Get docker info"
-RESULT=$(ssh -i ${PEM_FILE} ec2-user@${HOST_IP} "sudo docker info | grep Server\ Version:")
+RESULT=$(ssh -i ${PEM_FILE} ec2-user@${HOST_IP} "sudo docker info | grep Server\ Version: 2<&1")
 echo -e "\t\tDocker server version: ${RESULT}"
 
 echo -e "\tsystemctl: Start docker service"
