@@ -1,0 +1,138 @@
+ssh -i dockerdave00_aws_instance_keypair.pem ec2-user@3.142.208.177
+
+Handy docker commands:
+	docker images
+	docker ps -a
+	docker log
+	docker stop <containter name>
+	docker start <containter name>
+	docker rm <container id>
+	docker rmi <docker image id>
+	docker image prune -file
+	docker pull <dockerhub id>/<image>:<version>
+
+create ec2 t2.micro instance and use existing "dockerdave00_aws_instance_keypair.pem" file to connect
+
+for ec3 instance make sure to copy over the following files:
+
+	docker-compose.yaml
+	requirements.txt
+	init.sql
+	rds_setup_noredis.sh
+	postgres_setup_noredis.sh
+	postgres_setup.sh
+
+create security group for port 22 and port 80 for external connections
+create another security group for port 6379 for elasticache internal connections
+create another security group for port 5432 for rds internal connections
+
+make sure docker-compose.yaml does not include a redis containter install
+make sure docker-compose.yaml does not include a postgres containter install
+
+make sure a production.env file exits with the following information:
+
+	#
+	POSTGRES_HOST=database-1.coyflirdkmxc.us-east-2.rds.amazonaws.com
+	POSTGRES_PORT=5432
+	POSTGRES_DB_NAME=hello
+	POSTGRES_USER=postgres
+	POSTGRES_AUTH=postgres
+	#
+	REDIS_HOST=redis-cache.fobbyr.ng.0001.use2.cache.amazonaws.com
+	REDIS_PORT=6379
+
+perform a docker pull davidwnorrisjr/flask_server:latest before running docker-compose up to get the latest version of container
+
+perform sudo yum update to ensure instance is up to date
+install docker with "echo y | sudo amazon-linux-extras install docker"
+add ec2-user to docker group with "sudo usermod -a -G docker ec2-user" then log out and back in.
+start docker service with "sudo systemctl start docker"
+install docker-compose with "sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` | sudo tee /usr/local/bin/docker-compose > /dev/null"
+set docker compose permissions with "sudo chmod +x /usr/local/bin/docker-compose"
+setup docker compose sym link with "sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose"
+start docker with "docker-compose up --force-recreate --build -d"
+
+setup postgres database as necessary by running appropriate postgres/rds database setup script or perform by hand
+restart flask-server with "docker start flask_server". It likely won't be runnign because its expecting the database to be setup and it wasn't when youy started it.
+
+test basic function with http://<ec2 instance ip address>/hello
+
+# ------------------------------------------------------------------------------------------------------------
+
+create t2.micro elasticache cluster and connect to redis security group
+
+set values in cache from command line
+
+	curl -X POST -H "Content-Type:application/json" -d '{"key":"name", "value":"dave"}' localhost:5000/key
+
+***OPTIONAL*** install redis-stable for redis-cli capabilities (https://gist.github.com/Integralist/72161a96641fa4a0033d)
+
+	ssh <ec2 instance ip>
+	sudo yum install gcc
+	sudo yum install wget
+	wget http://download.redis.io/redis-stable.tar.gz
+	tar xvzf redis-stable.tar.gz
+	cd redis-stable
+	make
+	rm -rf redis-stable.tar.gz redis-stable.tar.gz.1
+	src/redis-cli -h <elasticache primary endpoint> -p 6379
+
+update PATH statement in ~/.bashrc to include the redis-stable install directory:
+
+	PATH=$PATH:~/redis-stable/src
+
+source ~/.bashrc to pick up new PATH statement
+you can connect to redis using redis-cli with the following command if necessary:
+
+	redis-cli -h <elasticache primary endpoint>:6379
+	
+
+once in redis-cli and connected show all keys with:
+
+	KEYS *
+
+show key value with
+
+	KEYS name
+
+show key value from browser:
+
+	http://<ec2 instance ip>/keys?key=name
+
+from command line on local computer
+
+	curl http://<ec2 instance ip>/key?key=name
+
+# ------------------------------------------------------------------------------------------------------------
+
+to make it easier for postgres RDS, create a .pgpass file with the following:
+
+	*:*:*:postgres:postgres
+
+at command line run "export PGPASSFILE='/home/ec2-user/.pgpass'"
+
+install psql:
+
+	sudo yum -y update
+	sudo yum provides psql
+    sudo yum install psql
+
+connect to rds instance using psql
+
+	psql --host=<rds primary enpoint> --port=5432 --username=postgres
+	
+	\l # lists all databases (should only find  postgres at this point
+	\dt # lists all tables 
+	\c # switches databases
+	
+create and populate database "hello"
+	
+	CREATE DATABASE hello;
+	\c hello
+	CREATE TABLE users (id SERIAL PRIMARY KEY, name varchar, address varchar, phone varchar);
+	INSERT INTO users(name, address, phone) VALUES ('Teresa', '1234 W Main Street', '123-456-7890');
+	INSERT INTO users(name, address, phone) VALUES ('Dave', '1234 W Main Street', '123-456-7891');
+
+verify database creation/population
+
+	SELECT * FROM users;
